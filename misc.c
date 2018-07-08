@@ -83,9 +83,8 @@ summary(void)
 	if (ddflags & C_NOINFO)
 		return;
 
-	if (need_newline && !need_summary) {
-		fprintf(stderr, "\n");
-	}
+	if (need_newline && !need_summary)
+		(void)fprintf(stderr, "\n");
 
 	secs = secs_elapsed();
 
@@ -117,10 +116,9 @@ progress(void)
 	int len = fprintf(stderr,
 	    "\r%ju bytes transferred in %.0f secs (%.0f bytes/sec)",
 	    st.bytes, secs, st.bytes / secs);
+
 	if (len < lastlen)
-	{
-		fprintf(stderr, "%*s", len - lastlen, ""); // pad the rest of the output with spaces
-	}
+		(void)fprintf(stderr, "%*s", len - lastlen, "");
 	lastlen = len;
 
 	need_newline = 1;
@@ -129,17 +127,17 @@ progress(void)
 
 /* ARGSUSED */
 void
-sigalrm_handler(int signo __unused)
-{
-	need_progress = 1;
-}
-
-/* ARGSUSED */
-void
 siginfo_handler(int signo __unused)
 {
 
 	need_summary = 1;
+}
+
+/* ARGSUSED */
+void
+sigalrm_handler(int signo __unused)
+{
+	need_progress = 1;
 }
 
 /* ARGSUSED */
