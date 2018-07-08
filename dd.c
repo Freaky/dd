@@ -246,7 +246,7 @@ setup(void)
 		ctab = casetab;
 	}
 
-	if (ddflags & C_PROGRESS) {
+	if ((ddflags & C_PROGRESS)) {
 		struct itimerval timer = {
 			.it_interval = { .tv_sec = 1, .tv_usec = 0 },
 			.it_value = { .tv_sec = 1, .tv_usec = 0 },
