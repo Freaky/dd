@@ -54,6 +54,8 @@ __FBSDID("$FreeBSD: stable/11/bin/dd/misc.c 331722 2018-03-29 02:50:57Z eadler $
 #include "dd.h"
 #include "extern.h"
 
+int need_newline = 0;
+
 double
 secs_elapsed(void)
 {
@@ -81,6 +83,9 @@ summary(void)
 	if (ddflags & C_NOINFO)
 		return;
 
+	if (need_newline)
+		fprintf(stderr, "\n");
+
 	secs = secs_elapsed();
 
 	(void)fprintf(stderr,
@@ -98,6 +103,37 @@ summary(void)
 		    st.bytes, secs, st.bytes / secs);
 	}
 	need_summary = 0;
+}
+
+void
+progress(void)
+{
+	double secs;
+	static int lastlen = 0;
+
+	if (ddflags & C_NOINFO)
+		return;
+
+	secs = secs_elapsed();
+
+	int len = fprintf(stderr,
+	    "\r%ju bytes transferred in %.0f secs (%.0f bytes/sec)",
+	    st.bytes, secs, st.bytes / secs);
+	if (len < lastlen)
+	{
+		fprintf(stderr, "%*s", len - lastlen, ""); // pad the rest of the output with spaces
+	}
+	lastlen = len;
+
+	need_newline = 1;
+	need_progress = 0;
+}
+
+/* ARGSUSED */
+void
+sigalrm_handler(int signo __unused)
+{
+	need_progress = 1;
 }
 
 /* ARGSUSED */
