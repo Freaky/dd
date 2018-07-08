@@ -117,9 +117,11 @@ progress(void)
 	    "\r%ju bytes transferred in %.0f secs (%.0f bytes/sec)",
 	    st.bytes, secs, st.bytes / secs);
 
-	if (len < lastlen)
-		(void)fprintf(stderr, "%*s", len - lastlen, "");
-	lastlen = len;
+	if (len > 0) {
+		if (len < lastlen)
+			(void)fprintf(stderr, "%*s", len - lastlen, "");
+		lastlen = len;
+	}
 
 	need_newline = 1;
 	need_progress = 0;
