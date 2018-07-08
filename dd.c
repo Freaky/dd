@@ -50,6 +50,7 @@ __FBSDID("$FreeBSD: stable/11/bin/dd/dd.c 331722 2018-03-29 02:50:57Z eadler $")
 #include <sys/conf.h>
 #include <sys/disklabel.h>
 #include <sys/filio.h>
+#include <sys/time.h>
 
 #include <assert.h>
 #include <ctype.h>
@@ -93,6 +94,7 @@ main(int argc __unused, char *argv[])
 	setup();
 
 	(void)signal(SIGINFO, siginfo_handler);
+	(void)signal(SIGALRM, siginfo_handler);
 	(void)signal(SIGINT, terminate);
 
 	atexit(summary);
@@ -241,6 +243,14 @@ setup(void)
 		}
 
 		ctab = casetab;
+	}
+
+	if (ddflags & C_PROGRESS) {
+		struct itimerval timer = {
+			.it_interval = { .tv_sec = 1, .tv_usec = 0 },
+			.it_value = { .tv_sec = 1, .tv_usec = 0 },
+		};
+		setitimer(ITIMER_REAL, &timer, NULL);
 	}
 
 	if (clock_gettime(CLOCK_MONOTONIC, &st.start))
