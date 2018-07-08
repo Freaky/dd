@@ -83,8 +83,9 @@ summary(void)
 	if (ddflags & C_NOINFO)
 		return;
 
-	if (need_newline)
+	if (need_newline && !need_summary) {
 		fprintf(stderr, "\n");
+	}
 
 	secs = secs_elapsed();
 
