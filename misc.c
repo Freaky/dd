@@ -112,9 +112,6 @@ progress(void)
 	double secs;
 	static int lastlen = 0;
 
-	if (ddflags & C_NOINFO)
-		return;
-
 	secs = secs_elapsed();
 
 	int len = fprintf(stderr,
